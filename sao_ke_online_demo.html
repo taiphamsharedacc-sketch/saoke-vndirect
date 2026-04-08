@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Demo Cung cấp sao kê online - VNDIRECT</title>
+  <style>
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #24243a;
+      --bg-header: #2c2c44;
+      --border: #3a3a55;
+      --text-primary: #e0e0e0;
+      --text-secondary: #9999aa;
+      --accent: #ff6d00;
+      --up: #00e676;
+      --down: #ff1744;
+      --ref: #ffd600;
+      --blue: #29b6f6;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .header {
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .logo {
+      color: var(--accent);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+    .nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav button {
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-secondary);
+      padding: 8px 14px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .nav button.active {
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+    }
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+    .card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .muted { color: var(--text-secondary); }
+    .small { font-size: 12px; }
+    .label {
+      display: block;
+      color: var(--text-secondary);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    input, select, textarea {
+      width: 100%;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 14px;
+      outline: none;
+    }
+    .readonly {
+      background: var(--bg-header);
+      cursor: default;
+    }
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+    .btn-primary, .btn-secondary, .btn-linkish {
+      border-radius: 8px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-size: 14px;
+      width: 100%;
+    }
+    .btn-primary {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .btn-primary.success { background: var(--up); color: #001b10; }
+    .btn-secondary {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+    }
+    .btn-primary[disabled] {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+    .stepbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .dot.active { background: var(--accent); }
+    .dot.done { background: var(--up); }
+    .line {
+      width: 28px;
+      height: 2px;
+      background: var(--border);
+    }
+    .line.done { background: var(--up); }
+    .step-name {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    .statement-option, .delivery-option {
+      background: var(--bg-primary);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    .statement-option.selected { border-color: var(--accent); background: rgba(255,109,0,.08); }
+    .delivery-option.selected { border-color: var(--up); background: rgba(0,230,118,.06); }
+    .chip-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+    .chip {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .chip.active { color: var(--accent); border-color: var(--accent); background: rgba(255,109,0,.12); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge.up { background: rgba(0,230,118,.15); color: var(--up); }
+    .badge.warn { background: rgba(255,214,0,.15); color: var(--ref); }
+    .info-box {
+      background: rgba(255,109,0,.08);
+      border: 1px solid rgba(255,109,0,.25);
+      color: var(--accent);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    .blue-box {
+      background: rgba(41,182,246,.08);
+      border: 1px solid rgba(41,182,246,.25);
+      color: var(--blue);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      margin-bottom: 16px;
+    }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--text-secondary); font-size: 11px; font-weight: 600; border-bottom-width: 2px; }
+    .mono { font-family: Roboto Mono, Consolas, monospace; }
+    .right { text-align: right; }
+    .center { text-align: center; }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .tabs button {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      padding: 10px 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .tabs button.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tabs button.primary-link {
+      margin-left: auto;
+      color: var(--accent);
+      background: rgba(255,109,0,.08);
+      border-radius: 6px 6px 0 0;
+      border-bottom-color: var(--accent);
+    }
+    .review-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .review-row .v { font-weight: 500; text-align: right; max-width: 60%; }
+    .otp-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 16px; }
+    .otp {
+      width: 48px;
+      height: 54px;
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: Roboto Mono, Consolas, monospace;
+    }
+    .status-ok { color: var(--up); }
+    .status-down { color: var(--down); }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      padding: 20px;
+    }
+    .modal.show { display: flex; }
+    .modal-content {
+      width: min(720px, 100%);
+      background: var(--bg-secondary);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      padding: 28px;
+    }
+    .preview-page {
+      background: #fff;
+      border-radius: 10px;
+      padding: 24px;
+      color: #000;
+      text-align: left;
+      font-size: 13px;
+    }
+    .preview-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 3px solid #F39200;
+      padding-bottom: 12px;
+      margin-bottom: 12px;
+    }
+    .preview-logo { font-size: 22px; font-weight: 700; color: #F39200; letter-spacing: 2px; }
+    .preview-title { text-align: center; font-size: 16px; font-weight: 700; margin: 18px 0; text-transform: uppercase; }
+    .preview-box {
+      min-height: 240px;
+      border: 1px dashed #bbb;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #777;
+      font-style: italic;
+      padding: 20px;
+      text-align: center;
+    }
+    .shield-wrap {
+      width: 80px; height: 80px; margin: 0 auto 8px; display: flex; align-items: center; justify-content: center;
+    }
+    .hidden { display: none !important; }
+    @media (max-width: 768px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .btn-row { flex-direction: column; }
+      .tabs button.primary-link { margin-left: 0; }
+      .review-row { flex-direction: column; gap: 6px; }
+      .review-row .v { max-width: 100%; text-align: left; }
+      .header { padding: 14px 16px; }
+      .container { padding: 20px 12px 40px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">VNDIRECT</div>
+    <div class="nav">
+      <button class="active" data-top-tab="landing">Sao kê tài khoản</button>
+      <button data-top-tab="create">Yêu cầu sao kê</button>
+      <button data-top-tab="history">Lịch sử</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="view-landing"></div>
+    <div id="view-create" class="hidden"></div>
+    <div id="view-history" class="hidden"></div>
+  </div>
+
+  <div class="modal" id="feeModal">
+    <div class="modal-content">
+      <div style="font-size:16px;font-weight:700;margin-bottom:16px;color:var(--accent)">Biểu phí hiện hành của VNDIRECT</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>STT</th><th>Nội dung</th><th>Mức phí</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td>Trích lục hồ sơ (chứng từ)</td><td>Miễn phí</td></tr>
+            <tr><td>2</td><td>Sao kê tài khoản</td><td>50.000 VNĐ/bản đối với 10 trang đầu tiên, từ trang thứ 11 thu phí 3.000 VNĐ/trang (tối đa không quá 500.000 VNĐ/bản)</td></tr>
+            <tr><td>3</td><td>Xác nhận số dư tài khoản</td><td>50.000 VNĐ/bản đầu tiên, từ bản thứ 2 thu phí 10.000 VNĐ/bản</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="small muted" style="line-height:1.6;margin-top:12px">
+        * Các mức phí quy định tại biểu phí chưa bao gồm thuế giá trị gia tăng (VAT). Khi thu phí dịch vụ, VNDIRECT sẽ tính và thu thuế VAT theo quy định của pháp luật hiện hành.<br>
+        * Mức phí quy định trong biểu phí chưa bao gồm các khoản phí phải trả cho các đơn vị khác cùng tham gia cung ứng dịch vụ. VNDIRECT sẽ thu các khoản phí này (nếu phát sinh) cùng với phí dịch vụ tương ứng.<br>
+        * Khách hàng có thể trả phí dịch vụ bằng việc trích/khấu trừ trực tiếp từ tài khoản giao dịch chứng khoán tại VNDIRECT.
+      </div>
+      <div class="btn-row"><button class="btn-primary" id="closeFee">Đóng</button></div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      topTab: 'landing',
+      subTab: 'money',
+      step: 0,
+      selectedType: null,
+      account: '0001234567 - Nguyễn Văn A',
+      quickPick: '3m',
+      fromDate: '2026-01-08',
+      toDate: '2026-04-08',
+      singleDate: '2026-04-08',
+      delivery: 'email',
+      addressType: 'registered',
+      otp: ['', '', '', '', '', ''],
+    };
+
+    const statementTypes = [
+      { id: 1, name: 'Sao kê giao dịch chứng khoán', desc: 'Lịch sử mua bán chứng khoán', hint: 'Cung cấp hồ sơ cấp tín dụng', group: 'A', lang: 'vi' },
+      { id: 2, name: 'Sao kê giao dịch tiền', desc: 'Lịch sử biến động tiền trong tài khoản', hint: 'Quyết toán thuế / Kiểm toán', group: 'A', lang: 'vi' },
+      { id: 3, name: 'Sao kê trạng thái tài khoản', desc: 'Thông tin tổng quan tài khoản tại một ngày xác định', hint: 'Chứng minh tài chính (Visa)', group: 'B', lang: 'vi-en' },
+      { id: 4, name: 'Sao kê số dư chứng khoán', desc: 'Số dư chứng khoán theo phân loại tại một ngày xác định', hint: 'Xác nhận quyền sở hữu chứng khoán', group: 'B', lang: 'vi-en' },
+      { id: 5, name: 'Xác nhận giá trị danh mục CK niêm yết', desc: 'Giá trị thị trường bình quân của danh mục CK niêm yết trong khoảng thời gian', hint: 'Chứng minh điều kiện NĐT chuyên nghiệp', group: 'A', lang: 'vi' },
+    ];
+
+    const accounts = [
+      '0001234567 - Nguyễn Văn A',
+      '0001234568 - Nguyễn Văn A (Margin)',
+    ];
+
+    const historyData = [
+      { id: 'SK-20260401-001', date: '01/04/2026', type: 'Sao kê giao dịch tiền', period: '01/01/2026 - 31/03/2026', payStatus: 'Thành công', result: 'Hoàn tất', hasFile: true },
+      { id: 'SK-20260328-002', date: '28/03/2026', type: 'Sao kê số dư chứng khoán', period: '28/03/2026', payStatus: 'Thành công', result: 'Hoàn tất', hasFile: true },
+      { id: 'SK-20260320-003', date: '20/03/2026', type: 'Sao kê trạng thái tài khoản', period: '20/03/2026', payStatus: 'Thất bại', result: 'Đang xử lý', hasFile: false },
+    ];
+
+    const moneyData = [
+      { date: '07/04/2026', desc: 'Bán CK - VNM', credit: '25,000,000', debit: '0', balance: '142,350,000' },
+      { date: '06/04/2026', desc: 'Cổ tức tiền mặt - FPT', credit: '1,200,000', debit: '0', balance: '117,350,000' },
+      { date: '04/04/2026', desc: 'Mua CK - MWG', credit: '0', debit: '15,800,000', balance: '116,150,000' },
+      { date: '03/04/2026', desc: 'Nộp tiền', credit: '50,000,000', debit: '0', balance: '131,950,000' },
+      { date: '01/04/2026', desc: 'Phí giao dịch', credit: '0', debit: '62,500', balance: '81,950,000' },
+    ];
+
+    const stockData = [
+      { date: '07/04/2026', ticker: 'VNM', type: 'Bán', qty: '500', price: '50,000', value: '25,000,000' },
+      { date: '04/04/2026', ticker: 'MWG', type: 'Mua', qty: '200', price: '79,000', value: '15,800,000' },
+      { date: '01/04/2026', ticker: 'FPT', type: 'Mua', qty: '100', price: '125,000', value: '12,500,000' },
+      { date: '28/03/2026', ticker: 'VNM', type: 'Mua', qty: '500', price: '48,500', value: '24,250,000' },
+    ];
+
+    const debtData = [
+      { date: '06/04/2026', desc: 'Giải ngân giao dịch ký quỹ', increase: '5,000,000', decreasePrincipal: '0', decreaseInterest: '0', remaining: '383,852,049' },
+      { date: '01/04/2026', desc: 'Trả nợ giao dịch ký quỹ', increase: '0', decreasePrincipal: '13,936,296', decreaseInterest: '0', remaining: '378,852,049' },
+      { date: '01/04/2026', desc: 'Trả nợ giao dịch ký quỹ', increase: '0', decreasePrincipal: '0', decreaseInterest: '55,041', remaining: '392,788,345' },
+      { date: '31/03/2026', desc: 'Trả nợ giao dịch ký quỹ', increase: '0', decreasePrincipal: '6,621,631', decreaseInterest: '0', remaining: '392,788,345' },
+      { date: '31/03/2026', desc: 'Trả nợ giao dịch ký quỹ', increase: '0', decreasePrincipal: '0', decreaseInterest: '1,690,869', remaining: '399,409,976' },
+      { date: '30/03/2026', desc: 'Trả nợ giao dịch ký quỹ', increase: '0', decreasePrincipal: '0', decreaseInterest: '5', remaining: '399,409,976' },
+    ];
+
+    const stepNames = [
+      'Chọn loại sao kê',
+      'Nhập điều kiện',
+      'Hình thức nhận',
+      'Xem trước nội dung mẫu',
+      'Xác nhận thông tin',
+      'Xác thực OTP',
+      'Kết quả',
+    ];
+
+    function getType() {
+      return statementTypes.find(t => t.id === state.selectedType) || null;
+    }
+
+    function isGroupA() {
+      const t = getType();
+      return t && t.group === 'A';
+    }
+
+    function resetFlow() {
+      state.step = 0;
+      state.selectedType = null;
+      state.otp = ['', '', '', '', '', ''];
+      state.addressType = 'registered';
+    }
+
+    function moneyClass(v) {
+      return Number(String(v).replace(/,/g, '')) > 0;
+    }
+
+    function renderTopTabs() {
+      document.querySelectorAll('.nav button').forEach(btn => {
+        const active = btn.dataset.topTab === state.topTab;
+        btn.classList.toggle('active', active);
+      });
+      document.getElementById('view-landing').classList.toggle('hidden', state.topTab !== 'landing');
+      document.getElementById('view-create').classList.toggle('hidden', state.topTab !== 'create');
+      document.getElementById('view-history').classList.toggle('hidden', state.topTab !== 'history');
+    }
+
+    function renderLanding() {
+      const root = document.getElementById('view-landing');
+      const subTabs = ['money', 'stock', 'debt'];
+      root.innerHTML = `
+        <div class="small muted" style="margin-bottom:16px">Báo cáo &nbsp;›&nbsp;<span style="color:var(--text-primary)">Sao kê tài khoản</span></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+          <select id="landingAccount" style="max-width:280px">
+            ${accounts.map(a => `<option ${a===state.account?'selected':''}>${a}</option>`).join('')}
+          </select>
+          <div class="card" style="padding:8px 12px;margin:0">🔄</div>
+          <div class="card" style="padding:8px 12px;margin:0">👁</div>
+        </div>
+
+        <div class="tabs">
+          <button class="${state.subTab==='money'?'active':''}" data-subtab="money">Sao kê tiền</button>
+          <button class="${state.subTab==='stock'?'active':''}" data-subtab="stock">Sao kê chứng khoán</button>
+          <button class="${state.subTab==='debt'?'active':''}" data-subtab="debt">Sao kê nợ</button>
+          <button class="primary-link" id="goCreate">+ Yêu cầu sao kê</button>
+        </div>
+
+        <div class="blue-box">ℹ Trong giờ giao dịch, hệ thống chỉ hiển thị dữ liệu trong 180 ngày.</div>
+
+        <div style="display:flex;gap:16px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
+          <label class="small muted">Từ ngày</label>
+          <input type="date" value="2026-03-09" style="max-width:170px">
+          <label class="small muted">Đến ngày</label>
+          <input type="date" value="2026-04-08" style="max-width:170px">
+        </div>
+
+        ${state.subTab === 'money' ? renderMoneyTable() : ''}
+        ${state.subTab === 'stock' ? renderStockTable() : ''}
+        ${state.subTab === 'debt' ? renderDebtTable() : ''}
+      `;
+
+      document.getElementById('landingAccount').onchange = (e) => { state.account = e.target.value; renderAll(); };
+      root.querySelectorAll('[data-subtab]').forEach(btn => {
+        btn.onclick = () => { state.subTab = btn.dataset.subtab; renderLanding(); };
+      });
+      document.getElementById('goCreate').onclick = () => { state.topTab = 'create'; resetFlow(); renderAll(); };
+    }
+
+    function renderMoneyTable() {
+      return `
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ngày phát sinh</th>
+                  <th>Diễn giải</th>
+                  <th class="right">Phát sinh tăng</th>
+                  <th class="right">Phát sinh giảm</th>
+                  <th class="right">Số dư</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${moneyData.map(r => `
+                  <tr>
+                    <td>${r.date}</td>
+                    <td>${r.desc}</td>
+                    <td class="right mono ${moneyClass(r.credit)?'status-ok':''}">${r.credit}</td>
+                    <td class="right mono ${moneyClass(r.debit)?'status-down':''}">${r.debit}</td>
+                    <td class="right mono"><strong>${r.balance}</strong></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStockTable() {
+      return `
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ngày GD</th>
+                  <th>Mã CK</th>
+                  <th>Loại GD</th>
+                  <th class="right">Khối lượng</th>
+                  <th class="right">Giá</th>
+                  <th class="right">Giá trị</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${stockData.map(r => `
+                  <tr>
+                    <td>${r.date}</td>
+                    <td><strong>${r.ticker}</strong></td>
+                    <td class="${r.type === 'Mua' ? 'status-ok' : 'status-down'}"><strong>${r.type}</strong></td>
+                    <td class="right mono">${r.qty}</td>
+                    <td class="right mono">${r.price}</td>
+                    <td class="right mono"><strong>${r.value}</strong></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDebtTable() {
+      return `
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+          ${[
+            ['Dư nợ gốc đầu kỳ', '198,907,279đ', 'var(--ref)'],
+            ['Dư nợ lãi đầu kỳ', '493,774đ', 'var(--ref)'],
+            ['Dư nợ gốc cuối kỳ', '383,852,049đ', 'var(--accent)'],
+            ['Dư nợ lãi cuối kỳ', '3,988,392đ', 'var(--accent)'],
+          ].map(([label, val, color]) => `
+            <div class="card" style="flex:1 1 160px;padding:8px 12px;margin:0">
+              <div class="small muted">${label}</div>
+              <div class="mono" style="font-size:13px;font-weight:600;color:${color}">${val}</div>
+            </div>`).join('')}
+        </div>
+        <div class="card" style="padding:8px 12px;text-align:center">
+          <div class="small muted">Tổng dư nợ cuối kỳ cả lãi</div>
+          <div class="mono" style="font-size:15px;font-weight:700;color:var(--down)">387,840,441đ</div>
+        </div>
+        <div class="card">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ngày phát sinh</th>
+                  <th>Diễn giải</th>
+                  <th class="right">Phát sinh tăng<br><span style="font-weight:400">(Giải ngân)</span></th>
+                  <th class="right">PS giảm<br><span style="font-weight:400">(Trả nợ gốc)</span></th>
+                  <th class="right">PS giảm<br><span style="font-weight:400">(Trả nợ lãi)</span></th>
+                  <th class="right">Dư nợ gốc còn lại</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${debtData.map(r => `
+                  <tr>
+                    <td>${r.date}</td>
+                    <td>${r.desc}</td>
+                    <td class="right mono ${moneyClass(r.increase)?'status-ok':''}">${r.increase}</td>
+                    <td class="right mono ${moneyClass(r.decreasePrincipal)?'status-down':''}">${r.decreasePrincipal}</td>
+                    <td class="right mono ${moneyClass(r.decreaseInterest)?'status-down':''}">${r.decreaseInterest}</td>
+                    <td class="right mono"><strong>${r.remaining}</strong></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderStepBar() {
+      return `
+        <div class="stepbar">
+          ${stepNames.map((_, i) => `
+            <div style="display:flex;align-items:center;gap:8px">
+              <div class="dot ${i < state.step ? 'done' : i === state.step ? 'active' : ''}"></div>
+              ${i < stepNames.length - 1 ? `<div class="line ${i < state.step ? 'done' : ''}"></div>` : ''}
+            </div>
+          `).join('')}
+        </div>
+        <div class="step-name">${stepNames[state.step]}</div>
+      `;
+    }
+
+    function renderCreate() {
+      const root = document.getElementById('view-create');
+      root.innerHTML = renderStepBar() + renderCreateStep();
+      bindCreateEvents();
+    }
+
+    function renderCreateStep() {
+      switch (state.step) {
+        case 0: return renderCreateStep0();
+        case 1: return renderCreateStep1();
+        case 2: return renderCreateStep2();
+        case 3: return renderCreateStep3();
+        case 4: return renderCreateStep4();
+        case 5: return renderCreateStep5();
+        case 6: return renderCreateStep6();
+        default: return '';
+      }
+    }
+
+    function renderCreateStep0() {
+      return `
+        <div class="card">
+          <div style="font-size:16px;font-weight:600;margin-bottom:16px">Yêu cầu sao kê</div>
+          <label class="label">Tài khoản</label>
+          <select id="createAccount">
+            ${accounts.map(a => `<option ${a===state.account?'selected':''}>${a}</option>`).join('')}
+          </select>
+
+          <div style="margin-top:20px">
+            <label class="label">Chọn loại sao kê</label>
+            ${statementTypes.map(t => `
+              <div class="statement-option ${state.selectedType===t.id?'selected':''}" data-type-id="${t.id}">
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px">${t.name}</div>
+                <div class="small muted" style="margin-bottom:4px">${t.desc}</div>
+                <div class="small" style="color:var(--accent);font-style:italic">Gợi ý: ${t.hint}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="btn-row">
+            <button class="btn-primary" id="step0Next" ${state.selectedType ? '' : 'disabled'}>Tiếp tục</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCreateStep1() {
+      const t = getType();
+      const groupA = isGroupA();
+      return `
+        <div class="card">
+          <div style="font-size:16px;font-weight:600;margin-bottom:4px">${t.name}</div>
+          <div class="small muted" style="margin-bottom:20px">${t.desc}</div>
+
+          <label class="label">Tài khoản</label>
+          <div class="readonly" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px">${state.account}</div>
+
+          <label class="label">Loại sao kê</label>
+          <div class="readonly" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px">${t.name}</div>
+
+          <label class="label">Ngôn ngữ</label>
+          <div class="readonly" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px">${t.lang === 'vi-en' ? 'Song ngữ Việt - Anh' : 'Tiếng Việt'}</div>
+
+          ${groupA ? `
+            <label class="label">Khung thời gian</label>
+            <div class="chip-row">
+              ${[['3m','3 tháng'],['6m','6 tháng'],['1y','1 năm'],['custom','Tùy chỉnh']].map(([k,v]) => `<div class="chip ${state.quickPick===k?'active':''}" data-chip="${k}">${v}</div>`).join('')}
+            </div>
+            <div class="grid-2">
+              <div>
+                <label class="label">Từ ngày</label>
+                <input type="date" id="fromDate" value="${state.fromDate}">
+              </div>
+              <div>
+                <label class="label">Đến ngày</label>
+                <input type="date" id="toDate" value="${state.toDate}">
+              </div>
+            </div>
+          ` : `
+            <label class="label">Ngày hiệu lực</label>
+            <input type="date" id="singleDate" value="${state.singleDate}" style="margin-bottom:12px">
+            <div class="info-box">ℹ Dữ liệu được xác nhận tại ngày giá trị mà hệ thống ghi nhận thông tin tài khoản / tài sản của khách hàng.</div>
+          `}
+
+          <div class="btn-row">
+            <button class="btn-secondary" id="back1">Quay lại</button>
+            <button class="btn-primary" id="next1">Tiếp tục</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCreateStep2() {
+      return `
+        <div class="card">
+          <div style="font-size:16px;font-weight:600;margin-bottom:16px">Lựa chọn hình thức nhận</div>
+
+          <div class="delivery-option ${state.delivery==='email'?'selected':''}" data-delivery="email">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <div>
+                <div style="font-weight:600;font-size:14px">📧 Gửi Email</div>
+                <div class="small muted" style="margin-top:4px">Bản mềm PDF có chữ ký số của VNDS</div>
+              </div>
+              <span class="badge up">Miễn phí</span>
+            </div>
+          </div>
+
+          <div class="delivery-option ${state.delivery==='mail'?'selected':''}" data-delivery="mail">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <div>
+                <div style="font-weight:600;font-size:14px">📬 Gửi chuyển phát nhanh</div>
+                <div class="small muted" style="margin-top:4px">Bản cứng có đóng dấu của VNDS</div>
+              </div>
+              <span class="badge warn" id="openFee" style="cursor:pointer">Có phí ↗</span>
+            </div>
+          </div>
+
+          ${state.delivery === 'mail' ? `
+            <div class="card" style="background:var(--bg-primary);padding:16px;margin-top:8px">
+              <label class="label">Địa chỉ nhận</label>
+              <select id="addressType" style="margin-bottom:12px">
+                <option value="registered" ${state.addressType==='registered'?'selected':''}>Địa chỉ đã đăng ký trên hệ thống</option>
+                <option value="other" ${state.addressType==='other'?'selected':''}>Địa chỉ khác</option>
+              </select>
+
+              ${state.addressType === 'registered' ? `
+                <div class="readonly" style="padding:10px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:12px">90 Pasteur, phường Sài Gòn, thành phố HCM</div>
+              ` : `
+                <label class="label">Tỉnh / Thành phố</label>
+                <select style="margin-bottom:12px"><option>-- Chọn Tỉnh/Thành phố --</option><option>TP. Hồ Chí Minh</option><option>Hà Nội</option><option>Đà Nẵng</option><option>Bình Dương</option><option>Đồng Nai</option></select>
+                <label class="label">Quận / Huyện</label>
+                <select style="margin-bottom:12px"><option>-- Chọn Quận/Huyện --</option><option>Quận 1</option><option>Quận 3</option><option>Quận 7</option><option>Quận Bình Thạnh</option><option>TP. Thủ Đức</option></select>
+                <label class="label">Xã / Phường</label>
+                <select style="margin-bottom:12px"><option>-- Chọn Xã/Phường --</option><option>Phường Bến Nghé</option><option>Phường Bến Thành</option><option>Phường Đa Kao</option><option>Phường Tân Định</option></select>
+                <label class="label">Địa chỉ cụ thể</label>
+                <input placeholder="Số nhà, tên đường..." style="margin-bottom:12px">
+              `}
+
+              <label class="label">SĐT người nhận</label>
+              <input value="0901xxxxxx" style="margin-bottom:12px">
+              <label class="label">Họ tên người nhận</label>
+              <input value="Nguyễn Văn A">
+            </div>
+          ` : ''}
+
+          <div class="btn-row">
+            <button class="btn-secondary" id="back2">Quay lại</button>
+            <button class="btn-primary" id="next2">Tiếp tục</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function previewStatementContent() {
+      const t = getType();
+      const titleMap = {
+        'Sao kê giao dịch chứng khoán': 'SAO KÊ GIAO DỊCH CHỨNG KHOÁN',
+        'Sao kê giao dịch tiền': 'SAO KÊ GIAO DỊCH TIỀN',
+        'Sao kê trạng thái tài khoản': 'SAO KÊ TRẠNG THÁI TÀI KHOẢN',
+        'Sao kê số dư chứng khoán': 'BÁO CÁO SỐ DƯ CHỨNG KHOÁN KHÁCH HÀNG',
+        'Xác nhận giá trị danh mục CK niêm yết': 'XÁC NHẬN GIÁ TRỊ DANH MỤC CHỨNG KHOÁN NIÊM YẾT',
+      };
+      const title = titleMap[t.name] || 'MẪU SAO KÊ';
+
+      if (t.name === 'Sao kê số dư chứng khoán') {
+        return `
+          <div class="preview-page">
+            <div class="preview-top">
+              <div>
+                <div class="preview-logo">VNDIRECT</div>
+                <div style="font-size:10px;color:#7C7C7B">SECURITIES CORPORATION</div>
+              </div>
+              <div style="text-align:right;font-size:11px;color:#7C7C7B;line-height:1.6">
+                01 Nguyen Thuong Hien Str, Hai Ba Trung Dist, Hanoi<br>
+                Phone: 024.3.9724568 • Fax: 024.3.9724600<br>
+                www.vndirect.com.vn
+              </div>
+            </div>
+            <div class="preview-title">BÁO CÁO SỐ DƯ CHỨNG KHOÁN KHÁCH HÀNG</div>
+            <div style="margin-bottom:12px">
+              <div style="display:flex;margin-bottom:4px"><span style="width:160px;font-weight:500">Họ và tên:</span><strong>Nguyễn Văn A</strong></div>
+              <div style="display:flex;margin-bottom:4px"><span style="width:160px;font-weight:500">Địa chỉ:</span><span>90 Pasteur, phường Sài Gòn, TP. HCM</span></div>
+              <div style="display:flex;margin-bottom:4px"><span style="width:160px;font-weight:500">Mã hợp đồng:</span><span class="mono">0001xxxxxx</span></div>
+              <div style="display:flex;margin-bottom:4px"><span style="width:160px;font-weight:500">Trong ngày:</span><span>${state.singleDate}</span></div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;margin-top:15px;font-family:Roboto, Segoe UI, sans-serif">
+              <thead>
+                <tr>
+                  <th rowspan="2" style="border:1px solid #000;padding:8px;font-size:12px">STT</th>
+                  <th rowspan="2" style="border:1px solid #000;padding:8px;font-size:12px">Mã CK</th>
+                  <th colspan="7" style="border:1px solid #000;padding:8px;font-size:12px">Báo cáo số dư chứng khoán</th>
+                  <th rowspan="2" style="border:1px solid #000;padding:8px;font-size:12px">Chờ nhận về</th>
+                  <th rowspan="2" style="border:1px solid #000;padding:8px;font-size:12px">Chờ lưu ký</th>
+                </tr>
+                <tr>
+                  ${['Giao dịch','Ký quỹ','Cầm cố','Phong tỏa','Chờ chuyển','Bán chờ giao','Tổng cộng'].map(h=>`<th style="border:1px solid #000;padding:8px;font-size:12px">${h}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">1</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">ROS</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">150</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">0</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">0</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">0</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">0</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">0</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">150</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">0</td>
+                  <td style="border:1px solid #999;padding:8px;text-align:center">0</td>
+                </tr>
+              </tbody>
+            </table>
+            <div style="text-align:right;font-size:13px;font-style:italic;margin-top:20px">Ngày 07 tháng 04 năm 2026</div>
+            <div style="display:flex;justify-content:space-between;margin-top:30px;font-size:13px">
+              <div style="text-align:center"><div style="font-weight:600;margin-bottom:40px">Người lập</div><div>Vũ Thị Ái Linh (SSE-HO)</div></div>
+              <div style="text-align:center"><div style="font-weight:600;margin-bottom:40px">Người duyệt</div><div>&nbsp;</div></div>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="preview-page">
+          <div class="preview-top">
+            <div>
+              <div class="preview-logo">VNDIRECT</div>
+              <div style="font-size:10px;color:#7C7C7B">SECURITIES CORPORATION</div>
+            </div>
+            <div style="text-align:right;font-size:11px;color:#7C7C7B;line-height:1.6">
+              01 Nguyen Thuong Hien Str, Hai Ba Trung Dist, Hanoi<br>
+              Phone: 024.3.9724568 • Fax: 024.3.9724600<br>
+              www.vndirect.com.vn
+            </div>
+          </div>
+          <div class="preview-title">${title}</div>
+          <div style="margin-bottom:20px">
+            <div style="display:flex;margin-bottom:6px"><span style="width:180px;font-weight:500">Họ và tên:</span><span>Nguyễn Văn A</span></div>
+            <div style="display:flex;margin-bottom:6px"><span style="width:180px;font-weight:500">Mã hợp đồng:</span><span class="mono">0001234567</span></div>
+            <div style="display:flex;margin-bottom:6px"><span style="width:180px;font-weight:500">${isGroupA() ? 'Khoảng thời gian:' : 'Ngày hiệu lực:'}</span><span>${isGroupA() ? `${state.fromDate} - ${state.toDate}` : state.singleDate}</span></div>
+          </div>
+          <div class="preview-box">Nội dung chi tiết của sao kê sẽ được hệ thống sinh theo dữ liệu thực tế của khách hàng.</div>
+          <div style="text-align:right;font-size:13px;font-style:italic;margin-top:20px">Ngày 08 tháng 04 năm 2026</div>
+        </div>
+      `;
+    }
+
+    function renderCreateStep3() {
+      return `
+        <div class="card">
+          <div style="font-size:16px;font-weight:600;margin-bottom:16px">Xem trước nội dung mẫu sao kê</div>
+          <div class="small muted" style="margin-bottom:16px">Hệ thống hiển thị mẫu sao kê theo loại báo cáo, điều kiện thời gian, ngôn ngữ và phương thức nhận mà Quý khách đã lựa chọn.</div>
+          ${previewStatementContent()}
+          <div class="btn-row">
+            <button class="btn-secondary" id="back3">Quay lại</button>
+            <button class="btn-primary" id="next3">Tiếp tục</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function reviewRow(label, value) {
+      return `<div class="review-row"><span class="muted small">${label}</span><span class="v">${value}</span></div>`;
+    }
+
+    function renderCreateStep4() {
+      const t = getType();
+      return `
+        <div class="card">
+          <div style="font-size:16px;font-weight:600;margin-bottom:16px">Xác nhận thông tin yêu cầu</div>
+          ${reviewRow('Tài khoản', state.account)}
+          ${reviewRow('Loại sao kê', t.name)}
+          ${reviewRow('Ngôn ngữ', t.lang === 'vi-en' ? 'Song ngữ Việt - Anh' : 'Tiếng Việt')}
+          ${reviewRow(isGroupA() ? 'Khung thời gian' : 'Ngày hiệu lực', isGroupA() ? `${state.fromDate} → ${state.toDate}` : state.singleDate)}
+          ${reviewRow('Hình thức nhận', state.delivery === 'email' ? 'Email – Bản mềm PDF có chữ ký số' : 'Chuyển phát nhanh – Bản cứng có đóng dấu')}
+          ${reviewRow('Phí dịch vụ', state.delivery === 'email' ? 'Miễn phí' : 'Theo biểu phí hiện hành')}
+          <div class="btn-row">
+            <button class="btn-secondary" id="back4">Quay lại</button>
+            <button class="btn-primary" id="next4">Xác nhận</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCreateStep5() {
+      return `
+        <div class="card" style="text-align:center">
+          <div class="shield-wrap">
+            <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+              <circle cx="40" cy="40" r="36" fill="rgba(255,109,0,0.12)" />
+              <circle cx="40" cy="40" r="26" fill="rgba(255,109,0,0.2)" />
+              <path d="M40 18 L56 28 V42 C56 52 48 60 40 64 C32 60 24 52 24 42 V28 Z" fill="#2c2c44" stroke="#ff6d00" stroke-width="2" />
+              <circle cx="40" cy="38" r="6" fill="none" stroke="#ff6d00" stroke-width="2" />
+              <rect x="39" y="44" width="2" height="8" rx="1" fill="#ff6d00" />
+            </svg>
+          </div>
+          <div style="font-size:20px;font-weight:700;margin-top:16px;margin-bottom:4px">Xác thực yêu cầu</div>
+          <div class="small muted" style="margin-bottom:24px">Quý khách vui lòng nhập <b>SMART OTP</b></div>
+          <div class="otp-row">
+            ${state.otp.map((v, i) => `<input class="otp" id="otp-${i}" maxlength="1" value="${v}">`).join('')}
+          </div>
+          <div style="color:var(--accent);font-size:13px;margin-bottom:24px;cursor:pointer">Nhận OTP qua số điện thoại</div>
+          <div class="btn-row">
+            <button class="btn-secondary" id="back5">Quay lại</button>
+            <button class="btn-primary" id="next5">Xác nhận</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderCreateStep6() {
+      return `
+        <div class="card" style="text-align:center">
+          <div style="width:64px;height:64px;border-radius:50%;background:rgba(0,230,118,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px">✓</div>
+          <div style="font-size:18px;font-weight:700;margin-bottom:8px">Yêu cầu đã được tiếp nhận</div>
+          <div class="small muted" style="max-width:420px;margin:0 auto 24px;line-height:1.7">
+            ${state.delivery === 'email'
+              ? 'Bản sao kê PDF có chữ ký số của VNDS đã sẵn sàng. Quý khách có thể kiểm tra qua email đã đăng ký.'
+              : 'Yêu cầu gửi bản cứng đã được tiếp nhận và đang được xử lý. Hồ sơ sẽ được in, đóng dấu và gửi tới địa chỉ Quý khách đã đăng ký.'}
+          </div>
+          <div class="btn-row">
+            ${state.delivery === 'email'
+              ? '<button class="btn-primary success">Xem sao kê</button>'
+              : '<button class="btn-primary">Chi tiết yêu cầu</button>'}
+            <button class="btn-secondary" id="backToCreateStart">Trở về</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindCreateEvents() {
+      const root = document.getElementById('view-create');
+
+      if (state.step === 0) {
+        const accountEl = root.querySelector('#createAccount');
+        if (accountEl) accountEl.onchange = (e) => { state.account = e.target.value; };
+        root.querySelectorAll('[data-type-id]').forEach(el => {
+          el.onclick = () => { state.selectedType = Number(el.dataset.typeId); renderCreate(); };
+        });
+        const next = root.querySelector('#step0Next');
+        if (next) next.onclick = () => { if (state.selectedType) { state.step = 1; renderCreate(); } };
+      }
+
+      if (state.step === 1) {
+        root.querySelector('#back1').onclick = () => { state.step = 0; renderCreate(); };
+        root.querySelector('#next1').onclick = () => {
+          const t = getType();
+          if (t && t.group === 'A') {
+            state.fromDate = root.querySelector('#fromDate').value;
+            state.toDate = root.querySelector('#toDate').value;
+          } else {
+            state.singleDate = root.querySelector('#singleDate').value;
+          }
+          state.step = 2;
+          renderCreate();
+        };
+        root.querySelectorAll('[data-chip]').forEach(el => {
+          el.onclick = () => { state.quickPick = el.dataset.chip; renderCreate(); };
+        });
+      }
+
+      if (state.step === 2) {
+        root.querySelectorAll('[data-delivery]').forEach(el => {
+          el.onclick = () => { state.delivery = el.dataset.delivery; renderCreate(); };
+        });
+        const openFee = root.querySelector('#openFee');
+        if (openFee) openFee.onclick = (e) => { e.stopPropagation(); document.getElementById('feeModal').classList.add('show'); };
+        const address = root.querySelector('#addressType');
+        if (address) address.onchange = (e) => { state.addressType = e.target.value; renderCreate(); };
+        root.querySelector('#back2').onclick = () => { state.step = 1; renderCreate(); };
+        root.querySelector('#next2').onclick = () => { state.step = 3; renderCreate(); };
+      }
+
+      if (state.step === 3) {
+        root.querySelector('#back3').onclick = () => { state.step = 2; renderCreate(); };
+        root.querySelector('#next3').onclick = () => { state.step = 4; renderCreate(); };
+      }
+
+      if (state.step === 4) {
+        root.querySelector('#back4').onclick = () => { state.step = 3; renderCreate(); };
+        root.querySelector('#next4').onclick = () => { state.step = 5; renderCreate(); };
+      }
+
+      if (state.step === 5) {
+        root.querySelector('#back5').onclick = () => { state.step = 4; renderCreate(); };
+        root.querySelector('#next5').onclick = () => { state.step = 6; renderCreate(); };
+        state.otp.forEach((v, i) => {
+          const input = root.querySelector('#otp-' + i);
+          if (input) {
+            input.oninput = (e) => {
+              const value = e.target.value.slice(-1);
+              state.otp[i] = value;
+              e.target.value = value;
+              if (value && i < 5) {
+                const next = root.querySelector('#otp-' + (i + 1));
+                if (next) next.focus();
+              }
+            };
+          }
+        });
+      }
+
+      if (state.step === 6) {
+        const btn = root.querySelector('#backToCreateStart');
+        if (btn) btn.onclick = () => { resetFlow(); renderCreate(); };
+      }
+    }
+
+    function renderHistory() {
+      const root = document.getElementById('view-history');
+      root.innerHTML = `
+        <div class="card">
+          <div style="font-size:16px;font-weight:600;margin-bottom:16px">Lịch sử yêu cầu sao kê</div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Mã YC</th>
+                  <th>Ngày</th>
+                  <th>Loại sao kê</th>
+                  <th>Thời gian</th>
+                  <th>Thanh toán</th>
+                  <th>Kết quả</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${historyData.map(h => `
+                  <tr>
+                    <td class="mono small">${h.id}</td>
+                    <td>${h.date}</td>
+                    <td>${h.type}</td>
+                    <td class="mono">${h.period}</td>
+                    <td><span class="badge ${h.payStatus === 'Thành công' ? 'up' : 'warn'}">${h.payStatus}</span></td>
+                    <td><span class="badge ${h.result === 'Hoàn tất' ? 'up' : 'warn'}">${h.result}</span></td>
+                    <td>${h.hasFile ? '<span style="color:var(--accent);cursor:pointer;font-size:12px">📄 Xem</span>' : '<span style="color:var(--accent);cursor:pointer;font-size:12px">Tiếp tục</span>'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+    }
+
+    function bindGlobal() {
+      document.querySelectorAll('.nav button').forEach(btn => {
+        btn.onclick = () => {
+          state.topTab = btn.dataset.topTab;
+          if (state.topTab === 'create' && state.step === 0 && !state.selectedType) resetFlow();
+          renderAll();
+        };
+      });
+      document.getElementById('closeFee').onclick = () => document.getElementById('feeModal').classList.remove('show');
+      document.getElementById('feeModal').onclick = (e) => {
+        if (e.target.id === 'feeModal') document.getElementById('feeModal').classList.remove('show');
+      };
+    }
+
+    function renderAll() {
+      renderTopTabs();
+      renderLanding();
+      renderCreate();
+      renderHistory();
+      bindGlobal();
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>
